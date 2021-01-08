@@ -2,6 +2,7 @@ package filter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -13,30 +14,43 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class MyFilter implements Filter {
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-    /**
-     * Default constructor. 
-     */
-    public MyFilter() {
-        // TODO Auto-generated constructor stub
-    }
+import model.User;
 
-	/**
-	 * @see Filter#destroy()
-	 */
-	public void destroy() {
-		// TODO Auto-generated method stub
-	}
+public class LoginFilter implements Filter {
 
-	/**
-	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
-	 */
+
+    public LoginFilter() {}
+
+
+	public void destroy() {}
+
+
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
-		//getWriter :Returns a PrintWriter object that can send character text to the client.
-		PrintWriter pw = servletResponse.getWriter();
-		HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
+		System.out.println("in LoginFilter(), time:"+ new Date().getTime());
+		// check with request body
+		try{
+			//getWriter :Returns a PrintWriter object that can send character text to the client.
+			ObjectMapper mapper = new ObjectMapper();
+			User user = mapper.readValue(servletRequest.getInputStream(), User.class);
 		
+			if(user.getUsername().equals("admin") && user.getPassword().equals("123")) {
+				System.out.println("user object: " + user);
+				chain.doFilter(servletRequest, servletResponse);
+			}
+			else {
+				HttpServletResponse response = (HttpServletResponse) servletResponse;
+				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+				response.getWriter().write("bad user credentials passed!");
+				response.getWriter().flush();
+			}
+		}catch(Exception e) {
+			HttpServletResponse response = (HttpServletResponse) servletResponse;
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().write("Unable to process request!");
+			response.getWriter().flush();
+		}
 		
 		
 		/*
@@ -71,11 +85,6 @@ public class MyFilter implements Filter {
 		}*/
 	}
 
-	/**
-	 * @see Filter#init(FilterConfig)
-	 */
-	public void init(FilterConfig fConfig) throws ServletException {
-		// TODO Auto-generated method stub
-	}
+	public void init(FilterConfig fConfig) throws ServletException {}
 
 }

@@ -3,26 +3,35 @@
   <display-name>FilterDemo</display-name>
   <servlet>
     <servlet-name>Login</servlet-name>
-    <servlet-class>servlet.ServletTest</servlet-class>
+    <servlet-class>servlet.ApplicationServlet</servlet-class>
   </servlet>
+  
   <servlet-mapping>
     <servlet-name>Login</servlet-name>
     <url-pattern>/login</url-pattern>
   </servlet-mapping>
+  
   <filter>
-  	<filter-name>MyFilter</filter-name>
-  	<filter-class>filter.MyFilter</filter-class>
+  	<filter-name>LoggerFilter</filter-name>
+  	<filter-class>filter.LoggerFilter</filter-class>
   </filter>
+  
   <filter-mapping>
-  	<filter-name>MyFilter</filter-name>
+  	<filter-name>LoggerFilter</filter-name>
   	<url-pattern>/login</url-pattern>
   </filter-mapping>
+  
+  <filter>
+  	<filter-name>LoginFilter</filter-name>
+  	<filter-class>filter.LoginFilter</filter-class>
+  </filter>
+  
+  <filter-mapping>
+  	<filter-name>LoginFilter</filter-name>
+  	<url-pattern>/login</url-pattern>
+  </filter-mapping>
+
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
-    <welcome-file>index.htm</welcome-file>
-    <welcome-file>index.jsp</welcome-file>
-    <welcome-file>default.html</welcome-file>
-    <welcome-file>default.htm</welcome-file>
-    <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
 </web-app>
